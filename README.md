@@ -1,36 +1,67 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## Alhana Logistique
+
+تطبيق ويب احترافي لإدارة اللوجستيك وCRM لشركة **مجموعة الهناء التجارية**.
+
+### التقنيات
+- **Next.js 15** (App Router) + TypeScript
+- Tailwind CSS + (أساس shadcn/ui) + Radix UI
+- TanStack Table
+- Zustand + React Hook Form + Zod
+- MongoDB + Mongoose
+- NextAuth.js (Credentials)
 
 ## Getting Started
 
-First, run the development server:
+### 1) المتطلبات
+- MongoDB يعمل محلياً أو على خادم
+- Node.js
+
+### 2) إعداد المتغيرات البيئية
+انسخ ملف البيئة:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cp .env.example .env.local
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+ثم عدّل `MONGODB_URI` و `NEXTAUTH_SECRET`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3) تشغيل السيرفر للتطوير
+```bash
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+افتح `http://localhost:3000`.
 
-## Learn More
+### تسجيل الدخول
+اذهب إلى ` /login ` وسجّل الدخول بحساب موجود في قاعدة البيانات.
 
-To learn more about Next.js, take a look at the following resources:
+### صفحات النظام
+- `/dashboard` لوحة القيادة (إحصائيات حية من MongoDB)
+- `/fleet` إدارة الأسطول + `/fleet/new`
+- `/drivers` السائقون + `/drivers/new`
+- `/orders` طلبات النقل + `/orders/new`
+- `/trips` الرحلات والتتبع (قالب جاهز)
+- `/maintenance` الوثائق والصيانة (قالب جاهز)
+- `/reports` التكاليف والتقارير (قالب جاهز)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### API (CRUD)
+- `GET/POST /api/vehicles` و `GET/PATCH/DELETE /api/vehicles/[id]`
+- `GET/POST /api/drivers` و `GET/PATCH/DELETE /api/drivers/[id]`
+- `GET/POST /api/clients` و `GET/PATCH/DELETE /api/clients/[id]`
+- `GET/POST /api/orders` و `GET/PATCH/DELETE /api/orders/[id]`
+- `GET /api/dashboard/metrics`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Auth (Login-only)
+- هذا المشروع مضبوط حاليًا على **تسجيل دخول فقط** (لا توجد صفحة تسجيل حساب للمستخدمين).
+- إنشاء المستخدمين يتم عبر إضافة شاشة إدارة مستخدمين أو عبر عملية admin داخل الشركة.
 
-## Deploy on Vercel
+## Build (Production)
+```bash
+npm run build
+npm start
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## ملاحظات
+- الحماية تتم داخل `src/app/(app)/layout.tsx` عبر `getServerSession` (Node runtime).
+- لا يزال بإمكانك توسيع الشاشات (Trips/Maintenance/Reports) وربطها بالـ CRUD والجداول حسب احتياج الشركة.
+# alhana
