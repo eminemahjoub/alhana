@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { Dialog, DialogPanel, Transition, TransitionChild } from "@headlessui/react";
-import { Search, CornerDownLeft, Clock, LayoutDashboard, Truck, Users, ClipboardList, Wrench, BarChart3 } from "lucide-react";
+import { Search, CornerDownLeft, Clock, LayoutDashboard, Truck, Users, ClipboardList, Wrench, BarChart3, ShoppingCart } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -14,6 +14,13 @@ type Cmd = {
   icon: React.ReactNode;
   keywords: string[];
   action: () => void;
+};
+
+type VehicleHit = {
+  _id: string;
+  matricule: string;
+  brand?: string;
+  model?: string;
 };
 
 const RECENT_KEY = "alhana.recentSearches";
@@ -35,11 +42,25 @@ function saveRecent(value: string) {
   localStorage.setItem(RECENT_KEY, JSON.stringify(now));
 }
 
+type JsonOk<T> = { ok: true; data: T };
+type JsonErr = { ok: false; message?: string; details?: unknown };
+type JsonResponse<T> = JsonOk<T> | JsonErr;
+
+function isRecord(v: unknown): v is Record<string, unknown> {
+  return typeof v === "object" && v !== null;
+}
+
+function asString(v: unknown) {
+  return typeof v === "string" ? v : "";
+}
+
 export function CommandPalette() {
   const router = useRouter();
   const [open, setOpen] = React.useState(false);
   const [query, setQuery] = React.useState("");
   const [recent, setRecent] = React.useState<string[]>([]);
+  const [vehicles, setVehicles] = React.useState<VehicleHit[]>([]);
+  const [vehiclesLoading, setVehiclesLoading] = React.useState(false);
   const inputRef = React.useRef<HTMLInputElement | null>(null);
 
   React.useEffect(() => setRecent(loadRecent()), [open]);
@@ -72,6 +93,51 @@ export function CommandPalette() {
     return () => clearTimeout(t);
   }, [open]);
 
+  React.useEffect(() => {
+    if (!open) return;
+    if (vehicles.length) return;
+    let mounted = true;
+    const controller = new AbortController();
+    const load = async () => {
+      setVehiclesLoading(true);
+      try {
+        const res = await fetch("/api/vehicles", { signal: controller.signal, cache: "no-store" });
+        const json = (await res.json().catch(() => null)) as unknown;
+        if (!mounted) return;
+        const data = (() => {
+          if (isRecord(json) && "ok" in json) {
+            const r = json as JsonResponse<unknown>;
+            if (r.ok && Array.isArray((r as JsonOk<unknown>).data)) return (r as JsonOk<unknown[]>).data;
+            return [];
+          }
+          return Array.isArray(json) ? json : [];
+        })();
+
+        const mapped = data
+          .map((raw) => {
+            const v = isRecord(raw) ? raw : {};
+            const _id = String(v._id ?? "");
+            const matricule = String(v.matricule ?? "");
+            const brand = asString(v.brand) || undefined;
+            const model = asString(v.model) || undefined;
+            return { _id, matricule, brand, model } satisfies VehicleHit;
+          })
+          .filter((v) => v._id && v.matricule);
+        setVehicles(mapped);
+      } catch (err) {
+        const name = err instanceof Error ? err.name : "";
+        if (name !== "AbortError") setVehicles([]);
+      } finally {
+        if (mounted) setVehiclesLoading(false);
+      }
+    };
+    void load();
+    return () => {
+      mounted = false;
+      controller.abort();
+    };
+  }, [open, vehicles.length]);
+
   const commands = React.useMemo<Cmd[]>(() => {
     const go = (href: string) => () => {
       setOpen(false);
@@ -85,18 +151,45 @@ export function CommandPalette() {
       { id: "fleet", title: "إدارة الأسطول", subtitle: "Vehicles", icon: <Truck className="h-4 w-4" />, keywords: ["fleet", "vehicles", "سيارات", "أسطول"], action: go("/fleet") },
       { id: "drivers", title: "السائقون", subtitle: "Drivers", icon: <Users className="h-4 w-4" />, keywords: ["drivers", "سائق", "السائقون"], action: go("/drivers") },
       { id: "maintenance", title: "الوثائق والصيانة", subtitle: "Maintenance", icon: <Wrench className="h-4 w-4" />, keywords: ["maintenance", "صيانة", "وثائق"], action: go("/maintenance") },
+      { id: "purchases", title: "طلبات المشتريات", subtitle: "Purchases", icon: <ShoppingCart className="h-4 w-4" />, keywords: ["purchases", "مشتريات", "طلب", "شراء"], action: go("/purchases") },
       { id: "reports", title: "التكاليف والتقارير", subtitle: "Reports", icon: <BarChart3 className="h-4 w-4" />, keywords: ["reports", "تقارير", "تكاليف"], action: go("/reports") },
     ];
   }, [router]);
 
+  const vehicleCommands = React.useMemo<Cmd[]>(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return [];
+    const hits = vehicles
+      .filter((v) => v.matricule.toLowerCase().includes(q))
+      .slice(0, 8);
+    return hits.map((v) => ({
+      id: `vehicle:${v._id}`,
+      title: v.matricule,
+      subtitle: [v.brand, v.model].filter(Boolean).join(" "),
+      icon: <Truck className="h-4 w-4" />,
+      keywords: ["matricule", "لوحة", "سيارة", v.matricule, v.brand ?? "", v.model ?? ""],
+      action: () => {
+        setOpen(false);
+        router.push(`/fleet/${v._id}`);
+        router.refresh();
+      },
+    }));
+  }, [query, vehicles, router]);
+
   const filtered = React.useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return commands;
-    return commands.filter((c) => {
+    const base = !q
+      ? commands
+      : commands.filter((c) => {
+          const hay = [c.title, c.subtitle ?? "", ...c.keywords].join(" ").toLowerCase();
+          return hay.includes(q);
+        });
+    if (!q) return base;
+    return [...vehicleCommands, ...base].filter((c) => {
       const hay = [c.title, c.subtitle ?? "", ...c.keywords].join(" ").toLowerCase();
       return hay.includes(q);
     });
-  }, [commands, query]);
+  }, [commands, query, vehicleCommands]);
 
   function run(cmd: Cmd) {
     if (query.trim()) saveRecent(query);
@@ -202,7 +295,7 @@ export function CommandPalette() {
                       </div>
                     ) : (
                       <div className="p-6 text-center text-sm text-muted-foreground">
-                        لا توجد نتائج.
+                        {vehiclesLoading ? "جاري تحميل الأسطول…" : "لا توجد نتائج."}
                       </div>
                     )}
                   </div>

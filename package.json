@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "purge:mocks": "PURGE_CONFIRM=YES_DELETE_MOCKS tsx src/scripts/purge-db.ts"
+    "purge:mocks": "PURGE_CONFIRM=YES_DELETE_MOCKS tsx src/scripts/purge-db.ts",
+    "seed:mocks": "SEED_CONFIRM=YES_SEED_MOCKS tsx src/scripts/seed-mocks.ts"
   },
   "dependencies": {
     "@auth/mongodb-adapter": "^3.11.2",

@@ -5,9 +5,11 @@ import { dbConnect } from "../lib/db";
 import { Client } from "../models/Client";
 import { Driver } from "../models/Driver";
 import { Maintenance } from "../models/Maintenance";
+import { PurchaseRequest } from "../models/PurchaseRequest";
 import { TransportOrder } from "../models/TransportOrder";
 import { Trip } from "../models/Trip";
 import { Vehicle } from "../models/Vehicle";
+import { VehicleAssignment } from "../models/VehicleAssignment";
 
 async function main() {
   const confirm = process.env.PURGE_CONFIRM;
@@ -20,12 +22,14 @@ async function main() {
   await dbConnect();
 
   const results = await Promise.all([
+    VehicleAssignment.deleteMany({}),
     Vehicle.deleteMany({}),
     Driver.deleteMany({}),
     Client.deleteMany({}),
     TransportOrder.deleteMany({}),
     Trip.deleteMany({}),
     Maintenance.deleteMany({}),
+    PurchaseRequest.deleteMany({}),
   ]);
 
   // eslint-disable-next-line no-console

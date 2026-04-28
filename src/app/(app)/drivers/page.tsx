@@ -17,7 +17,7 @@ export default async function DriversPage() {
         <div>
           <h2 className="text-lg font-bold">السائقون</h2>
           <p className="text-sm text-muted-foreground">
-            بيانات السائق، الرخصة، الحالة والتوفر.
+            بيانات السائق، الهوية، الإقامة والرخصة.
           </p>
         </div>
         <Link

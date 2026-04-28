@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import type { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
 
@@ -33,7 +34,14 @@ export const vehicleColumns: ColumnDef<VehicleRow>[] = [
   {
     accessorKey: "matricule",
     header: "اللوحة",
-    cell: ({ row }) => <div className="font-bold tracking-tight">{row.original.matricule}</div>,
+    cell: ({ row }) => (
+      <Link
+        href={`/fleet/${row.original._id}`}
+        className="font-bold tracking-tight underline-offset-4 hover:underline"
+      >
+        {row.original.matricule}
+      </Link>
+    ),
   },
   {
     id: "vehicle",

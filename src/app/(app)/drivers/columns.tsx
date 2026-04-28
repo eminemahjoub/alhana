@@ -1,16 +1,15 @@
 "use client";
 
 import type { ColumnDef } from "@tanstack/react-table";
-import { Badge } from "@/components/ui/badge";
 
 export type DriverRow = {
   _id: string;
   fullName: string;
   phone?: string;
+  idNumber?: string;
+  iqamaImageUrl?: string;
   licenseNumber: string;
   licenseCategory?: string;
-  status: "active" | "inactive" | "suspended";
-  isAvailable: boolean;
 };
 
 export const driverColumns: ColumnDef<DriverRow>[] = [
@@ -27,6 +26,15 @@ export const driverColumns: ColumnDef<DriverRow>[] = [
     ),
   },
   {
+    accessorKey: "idNumber",
+    header: "الهوية",
+    cell: ({ row }) => (
+      <div className="text-sm font-semibold" dir="ltr">
+        {row.original.idNumber ?? "—"}
+      </div>
+    ),
+  },
+  {
     accessorKey: "licenseNumber",
     header: "الرخصة",
     cell: ({ row }) => (
@@ -39,24 +47,21 @@ export const driverColumns: ColumnDef<DriverRow>[] = [
     ),
   },
   {
-    accessorKey: "isAvailable",
-    header: "التوفر",
-    cell: ({ row }) => (
-      <Badge variant={row.original.isAvailable ? "success" : "warning"}>
-        {row.original.isAvailable ? "متوفر" : "غير متوفر"}
-      </Badge>
-    ),
-  },
-  {
-    accessorKey: "status",
-    header: "الحالة",
-    cell: ({ row }) => (
-      <Badge
-        variant={row.original.status === "active" ? "info" : row.original.status === "inactive" ? "default" : "danger"}
-      >
-        {row.original.status === "active" ? "نشط" : row.original.status === "inactive" ? "غير نشط" : "موقوف"}
-      </Badge>
-    ),
+    accessorKey: "iqamaImageUrl",
+    header: "الإقامة",
+    cell: ({ row }) =>
+      row.original.iqamaImageUrl ? (
+        <a
+          className="text-sm font-semibold underline"
+          href={row.original.iqamaImageUrl}
+          target="_blank"
+          rel="noreferrer"
+        >
+          عرض
+        </a>
+      ) : (
+        <span className="text-sm text-muted-foreground">—</span>
+      ),
   },
 ];
 
