@@ -39,17 +39,20 @@ npm run dev
 - `/dashboard` لوحة القيادة (إحصائيات حية من MongoDB)
 - `/fleet` إدارة الأسطول + `/fleet/new`
 - `/drivers` السائقون + `/drivers/new`
-- `/orders` طلبات النقل + `/orders/new`
-- `/trips` الرحلات والتتبع (قالب جاهز)
-- `/maintenance` الوثائق والصيانة (قالب جاهز)
-- `/reports` التكاليف والتقارير (قالب جاهز)
+- `/maintenance` الوثائق والصيانة (+ تفاصيل + طباعة/PDF)
+- `/purchases` طلبات المشتريات (+ طباعة/PDF)
+- `/reports` التكاليف والتقارير (+ طباعة/PDF)
+
+> ملاحظة: `/orders` و`/trips` متعطّلين مؤقتًا (يرجعوا 404).
 
 ### API (CRUD)
 - `GET/POST /api/vehicles` و `GET/PATCH/DELETE /api/vehicles/[id]`
 - `GET/POST /api/drivers` و `GET/PATCH/DELETE /api/drivers/[id]`
 - `GET/POST /api/clients` و `GET/PATCH/DELETE /api/clients/[id]`
-- `GET/POST /api/orders` و `GET/PATCH/DELETE /api/orders/[id]`
 - `GET /api/dashboard/metrics`
+- `GET /api/reports/summary`
+
+> ملاحظة: `/api/orders*` متعطّلة مؤقتًا (ترجع 410).
 
 ## Auth (Login-only)
 - هذا المشروع مضبوط حاليًا على **تسجيل دخول فقط** (لا توجد صفحة تسجيل حساب للمستخدمين).
@@ -61,7 +64,20 @@ npm run build
 npm start
 ```
 
+## Docker (Production)
+يشغّل التطبيق + MongoDB معًا:
+
+```bash
+docker-compose up -d --build
+```
+
+افتح `http://localhost:3001` (تقدر تغيّر المنفذ):
+
+```bash
+APP_PORT=3000 docker-compose up -d --build
+```
+
 ## ملاحظات
 - الحماية تتم داخل `src/app/(app)/layout.tsx` عبر `getServerSession` (Node runtime).
-- لا يزال بإمكانك توسيع الشاشات (Trips/Maintenance/Reports) وربطها بالـ CRUD والجداول حسب احتياج الشركة.
+- لا يزال بإمكانك توسيع الشاشات حسب احتياج الشركة.
 # alhana

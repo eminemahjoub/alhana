@@ -7,7 +7,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 type Metrics = {
   activeVehiclesOnRoad: number;
-  deliveryRate: number;
   vehiclesTotal: number;
   vehiclesActive: number;
   vehiclesMaintenance: number;
@@ -64,7 +63,6 @@ export function MetricsCards({ refreshMs = 10_000 }: { refreshMs?: number }) {
   }
 
   const activeVehiclesOnRoad = metrics?.activeVehiclesOnRoad ?? 0;
-  const deliveryRate = metrics?.deliveryRate ?? 0;
   const vehiclesTotal = metrics?.vehiclesTotal ?? 0;
   const vehiclesActive = metrics?.vehiclesActive ?? 0;
   const vehiclesMaintenance = metrics?.vehiclesMaintenance ?? 0;
@@ -73,7 +71,6 @@ export function MetricsCards({ refreshMs = 10_000 }: { refreshMs?: number }) {
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
       <StatCard title="السيارات في الطريق" value={activeVehiclesOnRoad} hint="حالة: في الطريق" />
-      <StatCard title="معدل التسليم" value={`${deliveryRate}%`} hint="طلبات مُسلمة اليوم" />
       <StatCard title="إجمالي السيارات" value={vehiclesTotal} hint="كل سيارات الأسطول" />
       <StatCard title="سيارات نشيطة" value={vehiclesActive} hint="غير خارجة عن الخدمة" />
       <StatCard title="تحت الصيانة" value={vehiclesMaintenance} hint="حالة: صيانة" />

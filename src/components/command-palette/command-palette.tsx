@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { Dialog, DialogPanel, Transition, TransitionChild } from "@headlessui/react";
-import { Search, CornerDownLeft, Clock, LayoutDashboard, Truck, Users, ClipboardList, Wrench, BarChart3, ShoppingCart } from "lucide-react";
+import { Search, Clock, LayoutDashboard, Truck, Users, Wrench, BarChart3, ShoppingCart } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -146,8 +146,6 @@ export function CommandPalette() {
     };
     return [
       { id: "dashboard", title: "لوحة القيادة", subtitle: "Metrics & KPI", icon: <LayoutDashboard className="h-4 w-4" />, keywords: ["dashboard", "لوحة", "إحصائيات"], action: go("/dashboard") },
-      { id: "orders", title: "طلبات النقل", subtitle: "Orders", icon: <ClipboardList className="h-4 w-4" />, keywords: ["orders", "طلبات", "نقل"], action: go("/orders") },
-      { id: "new-order", title: "طلب نقل جديد", subtitle: "Create", icon: <CornerDownLeft className="h-4 w-4" />, keywords: ["new", "create", "طلب", "جديد"], action: go("/orders/new") },
       { id: "fleet", title: "إدارة الأسطول", subtitle: "Vehicles", icon: <Truck className="h-4 w-4" />, keywords: ["fleet", "vehicles", "سيارات", "أسطول"], action: go("/fleet") },
       { id: "drivers", title: "السائقون", subtitle: "Drivers", icon: <Users className="h-4 w-4" />, keywords: ["drivers", "سائق", "السائقون"], action: go("/drivers") },
       { id: "maintenance", title: "الوثائق والصيانة", subtitle: "Maintenance", icon: <Wrench className="h-4 w-4" />, keywords: ["maintenance", "صيانة", "وثائق"], action: go("/maintenance") },

@@ -3,8 +3,6 @@
 import * as React from "react";
 import {
   ResponsiveContainer,
-  LineChart,
-  Line,
   CartesianGrid,
   XAxis,
   YAxis,

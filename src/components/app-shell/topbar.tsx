@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { navItems } from "./nav-items";
 import { Moon, Sun, Monitor, Search } from "lucide-react";
@@ -86,13 +85,6 @@ export function Topbar() {
             </TooltipTrigger>
             <TooltipContent>تبديل المظهر</TooltipContent>
           </Tooltip>
-
-          <Link
-            href="/orders/new"
-            className="inline-flex h-10 items-center justify-center rounded-xl bg-secondary px-4 text-sm font-semibold text-secondary-foreground shadow hover:opacity-95"
-          >
-            طلب نقل جديد
-          </Link>
         </div>
       </div>
     </header>

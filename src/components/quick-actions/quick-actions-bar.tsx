@@ -8,18 +8,8 @@ import { toast } from "sonner";
 export function QuickActionsBar() {
   return (
     <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3">
-      <FloatingButton
-        href="/orders/new"
-        label="طلب جديد"
-        icon={<Plus className="h-5 w-5" />}
-        gradient
-      />
-      <FloatingButton
-        href="/orders?status=approved"
-        label="فلتر سريع"
-        icon={<Filter className="h-5 w-5" />}
-        onClick={() => toast("تم تطبيق فلتر سريع", { description: "طلبات معتمدة" })}
-      />
+      <FloatingButton href="/purchases/new" label="طلب مشتريات" icon={<Plus className="h-5 w-5" />} gradient />
+      <FloatingButton href="/maintenance/new" label="تقرير صيانة" icon={<Filter className="h-5 w-5" />} onClick={() => toast("اختصار", { description: "إضافة تقرير صيانة" })} />
       <motion.button
         type="button"
         whileHover={{ scale: 1.06, rotate: 1 }}
