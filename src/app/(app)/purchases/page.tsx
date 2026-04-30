@@ -25,7 +25,7 @@ export default async function PurchasesPage() {
       <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
         <div>
           <h2 className="text-lg font-bold">طلبات المشتريات</h2>
-          <p className="text-sm text-muted-foreground">Workflow: طلب → موافقة → استلام → فاتورة → دفع.</p>
+          <p className="text-sm text-muted-foreground">Workflow: طلب → موافقة → تم الطلب → استلام.</p>
         </div>
         <Link
           href="/purchases/new"

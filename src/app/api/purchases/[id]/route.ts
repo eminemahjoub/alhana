@@ -11,11 +11,11 @@ function isValidObjectId(id: string) {
   return mongoose.Types.ObjectId.isValid(id);
 }
 
-function computeTotal(items: Array<{ qty: number; unitPriceSar: number; totalSar: number }>) {
+function computeTotal(items: Array<{ qty: number; unitPriceSar?: number; totalSar?: number }>) {
   const safe = items.map((i) => ({
     qty: Number(i.qty) || 0,
-    unitPriceSar: Number(i.unitPriceSar) || 0,
-    totalSar: Number(i.totalSar) || 0,
+    unitPriceSar: Number(i.unitPriceSar ?? 0) || 0,
+    totalSar: Number(i.totalSar ?? 0) || 0,
   }));
   const sum = safe.reduce((acc, it) => acc + (it.totalSar || it.qty * it.unitPriceSar), 0);
   return Math.max(0, Math.round(sum * 100) / 100);
@@ -67,23 +67,6 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
       if (parsed.data.receiptAttachments) {
         doc.set("receiptAttachments", parsed.data.receiptAttachments satisfies Attachment[]);
       }
-    } else if (action === "invoice") {
-      if (st !== "received") return jsonError("Invalid transition", 409);
-      doc.status = "invoiced";
-      doc.invoicedAt = now;
-      doc.invoiceNumber = parsed.data.invoiceNumber ?? doc.invoiceNumber;
-      if (parsed.data.invoiceAttachments) {
-        doc.set("invoiceAttachments", parsed.data.invoiceAttachments satisfies Attachment[]);
-      }
-    } else if (action === "pay") {
-      if (st !== "invoiced") return jsonError("Invalid transition", 409);
-      doc.status = "paid";
-      doc.paidAt = now;
-      doc.paymentMethod = parsed.data.paymentMethod ?? doc.paymentMethod;
-      doc.paymentRef = parsed.data.paymentRef ?? doc.paymentRef;
-      if (parsed.data.paymentAttachments) {
-        doc.set("paymentAttachments", parsed.data.paymentAttachments satisfies Attachment[]);
-      }
     } else if (action === "cancel") {
       if (st === "paid" || st === "cancelled") return jsonError("Invalid transition", 409);
       doc.status = "cancelled";
@@ -108,7 +91,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   if (parsed.data.maintenanceId !== undefined) current.set("maintenanceId", parsed.data.maintenanceId);
   if (parsed.data.items !== undefined) {
     current.set("items", parsed.data.items);
-    const items = (current.get("items") as unknown) as Array<{ qty: number; unitPriceSar: number; totalSar: number }>;
+    const items = (current.get("items") as unknown) as Array<{ qty: number; unitPriceSar?: number; totalSar?: number }>;
     current.totalSar = computeTotal(items);
   }
 

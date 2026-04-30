@@ -17,7 +17,6 @@ import {
 } from "recharts";
 import { AnimatedCard } from "@/components/ux/animated-card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { formatSAR } from "@/lib/currency";
 
 type ChartsResponse = {
   ok: boolean;
@@ -25,9 +24,6 @@ type ChartsResponse = {
     series: Array<{
       day: string;
       orders: number;
-      revenue: number;
-      cost: number;
-      margin: number;
     }>;
     status: Array<{ status: string; count: number }>;
   };
@@ -94,35 +90,6 @@ export function DashboardCharts({ days = 14 }: { days?: number }) {
 
   return (
     <div className="grid grid-cols-1 gap-4 xl:grid-cols-3">
-      <AnimatedCard className="min-w-0 xl:col-span-2">
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="text-sm font-bold">الإيرادات اليومية</div>
-            <div className="text-xs text-muted-foreground">آخر {days} يوم</div>
-          </div>
-        </div>
-        <div className="mt-4 h-[240px] min-h-[240px] min-w-0 w-full" dir="ltr">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={series}>
-              <CartesianGrid strokeDasharray="4 4" opacity={0.25} />
-              <XAxis dataKey="day" tick={{ fontSize: 11 }} />
-              <YAxis tick={{ fontSize: 11 }} width={70} />
-              <ReTooltip
-                formatter={(v, name) => {
-                  const n = tooltipValue(v);
-                  if (name === "revenue") return [formatSAR(n), "الإيراد"] as const;
-                  if (name === "margin") return [formatSAR(n), "الربح"] as const;
-                  return [String(n), name ? String(name) : ""] as const;
-                }}
-                labelFormatter={(l) => `اليوم: ${l}`}
-              />
-              <Line type="monotone" dataKey="revenue" stroke="#0a8e42" strokeWidth={2.5} dot={false} />
-              <Line type="monotone" dataKey="margin" stroke="#4ea8c0" strokeWidth={2} dot={false} />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      </AnimatedCard>
-
       <AnimatedCard className="min-w-0">
         <div>
           <div className="text-sm font-bold">حالات الطلبات</div>
@@ -158,7 +125,7 @@ export function DashboardCharts({ days = 14 }: { days?: number }) {
         </div>
       </AnimatedCard>
 
-      <AnimatedCard className="min-w-0 xl:col-span-3">
+      <AnimatedCard className="min-w-0 xl:col-span-2">
         <div className="flex items-center justify-between">
           <div>
             <div className="text-sm font-bold">حجم الطلبات</div>

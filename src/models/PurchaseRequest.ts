@@ -5,8 +5,9 @@ const PurchaseItemSchema = new Schema(
   {
     name: { type: String, required: true, trim: true },
     qty: { type: Number, required: true, min: 0 },
-    unitPriceSar: { type: Number, required: true, min: 0 },
-    totalSar: { type: Number, required: true, min: 0 },
+    // legacy fields (prices removed from purchase requests UI)
+    unitPriceSar: { type: Number, min: 0, default: 0 },
+    totalSar: { type: Number, min: 0, default: 0 },
   },
   { _id: false }
 );
@@ -38,15 +39,8 @@ const PurchaseRequestSchema = new Schema(
     approvedAt: { type: Date, index: true },
     orderedAt: { type: Date, index: true },
     receivedAt: { type: Date, index: true },
-    invoicedAt: { type: Date, index: true },
-    paidAt: { type: Date, index: true },
 
     receiptAttachments: { type: [AttachmentSchema], default: [] },
-    invoiceNumber: { type: String, trim: true },
-    invoiceAttachments: { type: [AttachmentSchema], default: [] },
-    paymentMethod: { type: String, trim: true },
-    paymentRef: { type: String, trim: true },
-    paymentAttachments: { type: [AttachmentSchema], default: [] },
   },
   { timestamps: true }
 );

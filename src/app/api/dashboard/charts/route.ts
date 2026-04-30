@@ -8,17 +8,11 @@ export const dynamic = "force-dynamic";
 type DayPoint = {
   day: string; // YYYY-MM-DD
   orders: number;
-  revenue: number;
-  cost: number;
-  margin: number;
 };
 
 type ByDayAggRow = {
   _id: string;
   orders: number;
-  revenue: number;
-  cost: number;
-  margin: number;
 };
 
 type ByStatusAggRow = {
@@ -47,9 +41,6 @@ export async function GET(req: Request) {
             $dateToString: { format: "%Y-%m-%d", date: "$scheduledAt", timezone: "UTC" },
           },
           orders: { $sum: 1 },
-          revenue: { $sum: "$revenueDzd" },
-          cost: { $sum: "$costDzd" },
-          margin: { $sum: "$marginDzd" },
         },
       },
       { $sort: { _id: 1 } },
@@ -65,9 +56,6 @@ export async function GET(req: Request) {
   for (const row of byDayAgg as ByDayAggRow[]) {
     map.set(String(row._id), {
       orders: Number(row.orders ?? 0),
-      revenue: Number(row.revenue ?? 0),
-      cost: Number(row.cost ?? 0),
-      margin: Number(row.margin ?? 0),
     });
   }
 
@@ -76,7 +64,7 @@ export async function GET(req: Request) {
     const d = new Date(start);
     d.setDate(start.getDate() + i);
     const key = d.toISOString().slice(0, 10);
-    const v = map.get(key) ?? { orders: 0, revenue: 0, cost: 0, margin: 0 };
+    const v = map.get(key) ?? { orders: 0 };
     series.push({ day: key, ...v });
   }
 

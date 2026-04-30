@@ -10,8 +10,9 @@ export const purchaseAttachmentSchema = z.object({
 export const purchaseItemSchema = z.object({
   name: z.string().min(1),
   qty: z.coerce.number().min(0),
-  unitPriceSar: z.coerce.number().min(0),
-  totalSar: z.coerce.number().min(0),
+  // legacy fields (prices removed from purchase requests UI)
+  unitPriceSar: z.coerce.number().min(0).optional(),
+  totalSar: z.coerce.number().min(0).optional(),
 });
 
 export const createPurchaseSchema = z.object({
@@ -29,17 +30,6 @@ export const purchaseActionSchema = z.discriminatedUnion("action", [
   z.object({ action: z.literal("approve") }),
   z.object({ action: z.literal("order") }),
   z.object({ action: z.literal("receive"), receiptAttachments: z.array(purchaseAttachmentSchema).optional() }),
-  z.object({
-    action: z.literal("invoice"),
-    invoiceNumber: z.string().optional(),
-    invoiceAttachments: z.array(purchaseAttachmentSchema).optional(),
-  }),
-  z.object({
-    action: z.literal("pay"),
-    paymentMethod: z.string().optional(),
-    paymentRef: z.string().optional(),
-    paymentAttachments: z.array(purchaseAttachmentSchema).optional(),
-  }),
   z.object({ action: z.literal("cancel") }),
 ]);
 

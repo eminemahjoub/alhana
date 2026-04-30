@@ -4,7 +4,7 @@ export default function ReportsPage() {
       <div>
         <h2 className="text-lg font-bold">التكاليف والتقارير</h2>
         <p className="text-sm text-muted-foreground">
-          حساب تكلفة الرحلات، تقارير الربحية والأداء.
+          حساب التكاليف، تقارير الأداء.
         </p>
       </div>
     </div>

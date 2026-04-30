@@ -64,7 +64,11 @@ export const maintenanceColumns: ColumnDef<MaintenanceRow>[] = [
   {
     accessorKey: "title",
     header: "العنوان",
-    cell: ({ row }) => <div className="font-semibold">{row.original.title ?? "—"}</div>,
+    cell: ({ row }) => (
+      <Link href={`/maintenance/${row.original._id}`} className="font-semibold underline-offset-4 hover:underline">
+        {row.original.title ?? "تفاصيل"}
+      </Link>
+    ),
   },
   {
     accessorKey: "performedAt",

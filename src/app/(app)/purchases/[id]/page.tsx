@@ -17,7 +17,6 @@ type PurchaseRow = {
   title?: unknown;
   supplier?: unknown;
   notes?: unknown;
-  totalSar?: unknown;
   items?: unknown;
   vehicleId?: unknown;
 };
@@ -72,7 +71,6 @@ export default async function PurchaseDetailsPage({ params }: { params: Promise<
   const title = getString(r.title, "طلب مشتريات");
   const supplier = getString(r.supplier);
   const notes = getString(r.notes);
-  const totalSar = getNumber(r.totalSar);
   const vehicle = isRecord(r.vehicleId) ? ((r.vehicleId as unknown) as VehicleRef) : null;
   const vehicleMatricule = vehicle ? getString(vehicle.matricule, "") : "";
 
@@ -98,6 +96,12 @@ export default async function PurchaseDetailsPage({ params }: { params: Promise<
           <Link href="/purchases" className="inline-flex h-10 items-center justify-center rounded-xl border px-4 text-sm font-semibold hover:bg-muted">
             رجوع
           </Link>
+          <Link
+            href={`/purchases/${String(r._id ?? "")}/print`}
+            className="inline-flex h-10 items-center justify-center rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground shadow hover:opacity-95"
+          >
+            طباعة / PDF
+          </Link>
         </div>
       </div>
 
@@ -110,19 +114,13 @@ export default async function PurchaseDetailsPage({ params }: { params: Promise<
                 <div key={idx} className="flex items-center justify-between rounded-xl border bg-card/40 px-3 py-2 text-sm">
                   <div className="font-semibold">{getString(it.name)}</div>
                   <div className="text-xs text-muted-foreground tabular-nums" dir="ltr">
-                    {getNumber(it.qty)} × {getNumber(it.unitPriceSar)} = {getNumber(it.totalSar)} SAR
+                    {getNumber(it.qty)}
                   </div>
                 </div>
               ))
             ) : (
               <div className="text-sm text-muted-foreground">لا توجد بنود.</div>
             )}
-          </div>
-          <div className="mt-4 flex items-center justify-between rounded-2xl border bg-card/40 px-4 py-3">
-            <div className="text-sm text-muted-foreground">الإجمالي</div>
-            <div className="text-lg font-extrabold tabular-nums" dir="ltr">
-              {totalSar.toLocaleString("ar-SA")} SAR
-            </div>
           </div>
         </div>
 

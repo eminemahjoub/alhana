@@ -38,7 +38,7 @@ export default async function OrdersPage() {
         <div>
           <h2 className="text-lg font-bold">طلبات النقل</h2>
           <p className="text-sm text-muted-foreground">
-            إنشاء الطلبات وتعيين سيارة + سائق وتتبع الحالات.
+            إنشاء الطلبات وتعيين سيارة + سائق وإدارة الحالة.
           </p>
         </div>
         <Link

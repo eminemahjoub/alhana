@@ -9,7 +9,7 @@ export type PurchaseRow = {
   status: "draft" | "submitted" | "approved" | "ordered" | "received" | "invoiced" | "paid" | "cancelled";
   title?: string;
   supplier?: string;
-  totalSar: number;
+  totalSar?: number;
   createdAt?: string | Date;
   vehicleId?: { _id: string; matricule: string };
 };
@@ -71,13 +71,12 @@ export const purchaseColumns: ColumnDef<PurchaseRow>[] = [
       ),
   },
   {
-    accessorKey: "totalSar",
-    header: "الإجمالي (SAR)",
-    cell: ({ row }) => (
-      <div className="tabular-nums" dir="ltr">
-        {(row.original.totalSar ?? 0).toLocaleString("ar-SA")}
-      </div>
-    ),
+    accessorKey: "createdAt",
+    header: "التاريخ",
+    cell: ({ row }) => {
+      const d = row.original.createdAt instanceof Date ? row.original.createdAt : new Date(row.original.createdAt ?? "");
+      return <div className="text-sm">{Number.isNaN(d.getTime()) ? "—" : d.toLocaleDateString("ar-SA")}</div>;
+    },
   },
 ];
 

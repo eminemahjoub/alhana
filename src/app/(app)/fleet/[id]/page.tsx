@@ -6,6 +6,7 @@ import { Vehicle } from "@/models/Vehicle";
 import { Driver } from "@/models/Driver";
 import { Maintenance } from "@/models/Maintenance";
 import { VehicleAssignment } from "@/models/VehicleAssignment";
+import { PurchaseRequest } from "@/models/PurchaseRequest";
 import { Badge } from "@/components/ui/badge";
 import { AssignDriver } from "./assign-driver";
 
@@ -30,6 +31,13 @@ type MaintenanceRow = {
   title?: string;
   performedAt?: Date;
   odometerKm?: number;
+};
+
+type PurchaseRow = {
+  _id: unknown;
+  title?: string;
+  status?: string;
+  createdAt?: Date;
 };
 
 function isRecord(v: unknown): v is Record<string, unknown> {
@@ -97,6 +105,12 @@ export default async function VehicleDetailsPage({ params }: { params: Promise<{
     .limit(50)
     .lean();
 
+  const purchases = await PurchaseRequest.find({ vehicleId: id })
+    .sort({ createdAt: -1 })
+    .limit(50)
+    .select("_id title status createdAt")
+    .lean();
+
   const s = statusLabel(String(vehicle.status ?? ""));
   const imageUrl = typeof vehicle.imageUrl === "string" ? vehicle.imageUrl : "";
   const matricule = String(vehicle.matricule ?? "");
@@ -133,6 +147,12 @@ export default async function VehicleDetailsPage({ params }: { params: Promise<{
         <div className="flex items-center gap-2">
           <Link href="/fleet" className="inline-flex h-10 items-center justify-center rounded-xl border px-4 text-sm font-semibold hover:bg-muted">
             رجوع للأسطول
+          </Link>
+          <Link
+            href={`/fleet/${encodeURIComponent(String(vehicle._id))}/print`}
+            className="inline-flex h-10 items-center justify-center rounded-xl border px-4 text-sm font-semibold hover:bg-muted"
+          >
+            طباعة / PDF
           </Link>
           <Link href="/maintenance" className="inline-flex h-10 items-center justify-center rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground shadow hover:opacity-95">
             الصيانة
@@ -267,17 +287,45 @@ export default async function VehicleDetailsPage({ params }: { params: Promise<{
                   const performed = getDate(m.performedAt)?.toLocaleDateString("ar-SA") ?? "—";
                   const km = getNumber(m.odometerKm);
                   return (
-                    <div key={String(m._id)} className="rounded-xl border bg-card/40 px-3 py-2">
-                      <div className="text-sm font-semibold">{title}</div>
+                    <Link key={String(m._id)} href={`/maintenance/${String(m._id)}`} className="block rounded-xl border bg-card/40 px-3 py-2 hover:bg-muted/30">
+                      <div className="text-sm font-semibold underline-offset-4 hover:underline">{title}</div>
                       <div className="text-xs text-muted-foreground">
                         {performed}
                         {km !== null ? ` • ${km.toLocaleString("fr-DZ")} كم` : ""}
                       </div>
-                    </div>
+                    </Link>
                   );
                 })
               ) : (
                 <div className="text-sm text-muted-foreground">لا يوجد سجل صيانة بعد.</div>
+              )}
+            </div>
+          </div>
+
+          <div className="rounded-2xl border bg-background/30 p-4">
+            <div className="flex items-center justify-between gap-2">
+              <div className="text-sm font-bold">طلبات المشتريات</div>
+              <Link
+                href={`/purchases/new?vehicleId=${encodeURIComponent(String(vehicle._id))}`}
+                className="text-xs font-semibold underline-offset-4 hover:underline"
+              >
+                طلب جديد
+              </Link>
+            </div>
+            <div className="mt-3 space-y-2">
+              {purchases.length ? (
+                (purchases as unknown as PurchaseRow[]).map((p) => {
+                  const title = getString(p.title, "طلب مشتريات");
+                  const when = getDate(p.createdAt)?.toLocaleDateString("ar-SA") ?? "—";
+                  return (
+                    <Link key={String(p._id)} href={`/purchases/${String(p._id)}`} className="block rounded-xl border bg-card/40 px-3 py-2 hover:bg-muted/30">
+                      <div className="text-sm font-semibold">{title}</div>
+                      <div className="text-xs text-muted-foreground">{when}</div>
+                    </Link>
+                  );
+                })
+              ) : (
+                <div className="text-sm text-muted-foreground">لا توجد طلبات بعد.</div>
               )}
             </div>
           </div>

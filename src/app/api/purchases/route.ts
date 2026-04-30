@@ -8,11 +8,11 @@ import { createPurchaseSchema } from "@/schemas/purchase";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-function computeTotal(items: Array<{ qty: number; unitPriceSar: number; totalSar: number }>) {
+function computeTotal(items: Array<{ qty: number; unitPriceSar?: number; totalSar?: number }>) {
   const safe = items.map((i) => ({
     qty: Number(i.qty) || 0,
-    unitPriceSar: Number(i.unitPriceSar) || 0,
-    totalSar: Number(i.totalSar) || 0,
+    unitPriceSar: Number(i.unitPriceSar ?? 0) || 0,
+    totalSar: Number(i.totalSar ?? 0) || 0,
   }));
   const sum = safe.reduce((acc, it) => acc + (it.totalSar || it.qty * it.unitPriceSar), 0);
   return Math.max(0, Math.round(sum * 100) / 100);

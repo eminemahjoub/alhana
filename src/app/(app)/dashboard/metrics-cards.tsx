@@ -4,13 +4,10 @@ import * as React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { AnimatedCard } from "@/components/ux/animated-card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { formatSAR } from "@/lib/currency";
 
 type Metrics = {
-  tripsToday: number;
   activeVehiclesOnRoad: number;
   deliveryRate: number;
-  revenueDzd: number;
   vehiclesTotal: number;
   vehiclesActive: number;
   vehiclesMaintenance: number;
@@ -66,10 +63,8 @@ export function MetricsCards({ refreshMs = 10_000 }: { refreshMs?: number }) {
     );
   }
 
-  const tripsToday = metrics?.tripsToday ?? 0;
   const activeVehiclesOnRoad = metrics?.activeVehiclesOnRoad ?? 0;
   const deliveryRate = metrics?.deliveryRate ?? 0;
-  const revenueDzd = metrics?.revenueDzd ?? 0;
   const vehiclesTotal = metrics?.vehiclesTotal ?? 0;
   const vehiclesActive = metrics?.vehiclesActive ?? 0;
   const vehiclesMaintenance = metrics?.vehiclesMaintenance ?? 0;
@@ -77,15 +72,8 @@ export function MetricsCards({ refreshMs = 10_000 }: { refreshMs?: number }) {
 
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-      <StatCard title="رحلات اليوم" value={tripsToday} hint="عدد الطلبات المجدولة اليوم" />
       <StatCard title="السيارات في الطريق" value={activeVehiclesOnRoad} hint="حالة: في الطريق" />
       <StatCard title="معدل التسليم" value={`${deliveryRate}%`} hint="طلبات مُسلمة اليوم" />
-      <StatCard
-        title="الإيرادات"
-        value={formatSAR(revenueDzd)}
-        hint="إيرادات اليوم"
-        accent
-      />
       <StatCard title="إجمالي السيارات" value={vehiclesTotal} hint="كل سيارات الأسطول" />
       <StatCard title="سيارات نشيطة" value={vehiclesActive} hint="غير خارجة عن الخدمة" />
       <StatCard title="تحت الصيانة" value={vehiclesMaintenance} hint="حالة: صيانة" />

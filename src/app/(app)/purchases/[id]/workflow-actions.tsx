@@ -17,13 +17,7 @@ export function PurchaseWorkflowActions({
   const [busy, setBusy] = React.useState<string | null>(null);
   const [uploading, setUploading] = React.useState(false);
 
-  const [invoiceNumber, setInvoiceNumber] = React.useState("");
-  const [paymentMethod, setPaymentMethod] = React.useState("");
-  const [paymentRef, setPaymentRef] = React.useState("");
-
   const [receiptAtts, setReceiptAtts] = React.useState<Attachment[]>([]);
-  const [invoiceAtts, setInvoiceAtts] = React.useState<Attachment[]>([]);
-  const [paymentAtts, setPaymentAtts] = React.useState<Attachment[]>([]);
 
   async function upload(files: FileList, setter: (v: Attachment[]) => void, current: Attachment[]) {
     setUploading(true);
@@ -84,30 +78,15 @@ export function PurchaseWorkflowActions({
           >
             استلام
           </Button>
-          <Button
-            type="button"
-            variant="outline"
-            disabled={busy !== null || status !== "received"}
-            onClick={() => void act({ action: "invoice", invoiceNumber, invoiceAttachments: invoiceAtts })}
-          >
-            فاتورة
-          </Button>
-          <Button
-            type="button"
-            disabled={busy !== null || status !== "invoiced"}
-            onClick={() => void act({ action: "pay", paymentMethod, paymentRef, paymentAttachments: paymentAtts })}
-          >
-            دفع
-          </Button>
-          <Button type="button" variant="outline" disabled={busy !== null || status === "paid" || status === "cancelled"} onClick={() => void act({ action: "cancel" })}>
+          <Button type="button" variant="outline" disabled={busy !== null || status === "cancelled" || status === "paid"} onClick={() => void act({ action: "cancel" })}>
             إلغاء
           </Button>
         </div>
         {busy ? <div className="mt-2 text-xs text-muted-foreground">جارٍ التنفيذ…</div> : null}
       </div>
 
-      <div className="grid grid-cols-1 gap-4 xl:grid-cols-3">
-        <div className="rounded-2xl border bg-background/30 p-4">
+      <div className="grid grid-cols-1 gap-4">
+        <div className="rounded-2xl border bg-background/30 p-4 max-w-xl">
           <div className="text-sm font-bold">مرفقات الاستلام</div>
           <div className="mt-3 space-y-2">
             <Label>رفع</Label>
@@ -135,63 +114,6 @@ export function PurchaseWorkflowActions({
                 ))}
               </div>
             ) : null}
-          </div>
-        </div>
-
-        <div className="rounded-2xl border bg-background/30 p-4">
-          <div className="text-sm font-bold">الفاتورة</div>
-          <div className="mt-3 space-y-2">
-            <Label>رقم الفاتورة</Label>
-            <input
-              className="h-10 w-full rounded-xl border border-input bg-background px-3 text-sm"
-              value={invoiceNumber}
-              onChange={(e) => setInvoiceNumber(e.target.value)}
-              placeholder="INV-..."
-              dir="ltr"
-            />
-            <Label>مرفقات</Label>
-            <input
-              type="file"
-              multiple
-              accept="image/png,image/jpeg,image/webp,application/pdf"
-              disabled={uploading}
-              className="block w-full text-sm text-muted-foreground file:mr-3 file:rounded-xl file:border file:bg-card/60 file:px-4 file:py-2 file:text-sm file:font-semibold hover:file:bg-muted"
-              onChange={(e) => {
-                if (e.target.files) void upload(e.target.files, setInvoiceAtts, invoiceAtts);
-              }}
-            />
-          </div>
-        </div>
-
-        <div className="rounded-2xl border bg-background/30 p-4">
-          <div className="text-sm font-bold">الدفع</div>
-          <div className="mt-3 space-y-2">
-            <Label>طريقة الدفع</Label>
-            <input
-              className="h-10 w-full rounded-xl border border-input bg-background px-3 text-sm"
-              value={paymentMethod}
-              onChange={(e) => setPaymentMethod(e.target.value)}
-              placeholder="تحويل/نقد..."
-            />
-            <Label>مرجع/رقم</Label>
-            <input
-              className="h-10 w-full rounded-xl border border-input bg-background px-3 text-sm"
-              value={paymentRef}
-              onChange={(e) => setPaymentRef(e.target.value)}
-              placeholder="REF..."
-              dir="ltr"
-            />
-            <Label>مرفقات</Label>
-            <input
-              type="file"
-              multiple
-              accept="image/png,image/jpeg,image/webp,application/pdf"
-              disabled={uploading}
-              className="block w-full text-sm text-muted-foreground file:mr-3 file:rounded-xl file:border file:bg-card/60 file:px-4 file:py-2 file:text-sm file:font-semibold hover:file:bg-muted"
-              onChange={(e) => {
-                if (e.target.files) void upload(e.target.files, setPaymentAtts, paymentAtts);
-              }}
-            />
           </div>
         </div>
       </div>
